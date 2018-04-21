@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.linalg import inv
 '''
 	Soal dari buku : 	Kusumadewi, S.. (2004). Aplikasi Logika Fuzzy Untuk Pendukung Keputusan. Yogyakarta: Graha Ilmu.
 						Bab V (kasus1)
@@ -58,6 +59,14 @@ def ubahkeFuzzyDana(data):
 	hasil.append(myu)
 	return(hasil)
 
+def keanggotaanTinggi(data):
+	hasil = []
+	for x in data:
+		if(x>=0 and x<40000000):
+			y=x/40000000
+		elif(x>=40000000):
+			y=1
+		hasil.append(y)
 
 
 def clearFile(namaFile):
@@ -111,13 +120,13 @@ def linearRegresion(data):
 
 	return(a,b)
 
-'''
-hasil = []
-hasil = ubahkeFuzzyDana(data2)
-print(hasil[1])
-'''
 
-# a,b = linearRegresion(data2)
+# hasil = []
+# hasil = ubahkeFuzzyDana(data2)
+# print(hasil[1])
+
+
+# b,a = linearRegresion(data2)
 # print(a)
 # print(b)
 
@@ -139,6 +148,7 @@ print(hasil[1])
 # clearFile('normalisasi1')
 # insertFile('normalisasi1',normalisasi)
 
+'''
 # menggambarkan grafik linear regresi untuk y = laba dan x = nilai kenaggotaan tinggi dari total
 total,_ = data2 #0-> total, 1-> laba
 laba,keanggotaan = ubahkeFuzzyDana(data2) #0 -> laba, 1->keanggotaan tinggi dari total
@@ -162,8 +172,139 @@ def f(data,a,b):
 plt.plot(keanggotaan,f(keanggotaan,a,b),c='k',label='hasil regresi')
 plt.legend()
 plt.show()
+'''
+
+def pembentukanVektorG(keanggotaan):
+	vektorHasil=[]
+	i=0
+	while(i<len(keanggotaan)):
+		vektorTemp=[]
+		j=0
+		while (j<len(keanggotaan)):
+			if(i==j):
+				vektorTemp.append(keanggotaan[i])
+			else:
+				vektorTemp.append(0)
+			j+=1
+		i+=1
+		vektorHasil.append(vektorTemp)
+	return (vektorHasil)
+
+# def transposeCuy(dataMatrix):
+# 	hasil=[]
+# 	for x in dataMatrix:
+# 		temp=[]
+# 		temp.append(x)
+# 		hasil.append(temp)
+# 	return (hasil)
+
+def cariNilaiA(G,X,Xt,Yt):
+	hasil1 = np.matmul(X,G)
+	hasil2 = np.matmul(hasil1,Xt)
+	hasil3 = inv(hasil2)
+	hasil4 = np.matmul(hasil3,X)
+	hasil5 = np.matmul(hasil4,G)
+	hasil6 = np.matmul(hasil5,Yt)
+	return(hasil6)
 
 
+normalisasi= ubahKeFuzzy(data,4)#tenagakerja, modal, material, teknologi, informasi, manajerial
+ntk, nmo, nma, nte, nin, nman = normalisasi
+laba,keanggotaan = ubahkeFuzzyDana(data2)
+##dibuat ke numpy supaya 2D
+G = np.array(pembentukanVektorG(nmo))
+X = np.array([keanggotaan])
+Xt = X.T
+Y = np.array([laba])
+Yt = Y.T
+##print(G.shape,X.shape,Xt.shape,Y.shape,Yt.shape)
+a = cariNilaiA(G,X,Xt,Yt)
+a = a[0,0]
+##print(a)
+
+def gambarGrafik(dataProses,value,flag):
+	a,b = linearRegresion(dataProses)
+	keanggotaan,laba = dataProses
+	def f1(keanggotaan,a,b):
+		hit = []
+		for x in keanggotaan:
+			y = b*x+a
+			hit.append(y)
+		return(hit)
+	def f2(keanggotaan,a):
+		hit = []
+		for x in keanggotaan:
+			y = x*a
+			hit.append(y)
+		return(hit)
+	plt.scatter(keanggotaan,laba,label='data aktual',s=0.5)
+	plt.plot(keanggotaan,f1(keanggotaan,a,b),c='k',label='hasil regresi without',linewidth=0.1)
+	if(flag==1):
+		plt.plot(keanggotaan,f2(keanggotaan,value),c='r',label='hasil regresi',linewidth=0.1)
+	plt.legend()
+	plt.show()
+
+def cariTitikPotong(garis1,garis2):
+	xdiff = (garis1[0][0]-garis1[1][0],garis2[0][0]-garis2[1][0])
+	ydiff = (garis1[0][0]-garis1[1][0],garis2[0][0]-garis2[1][0])
+
+	def det(a,b):
+		return (a[0]*b[0] - a[1]*b[0])
+
+	div = det(xdiff,ydiff)
+	if div == 0:
+		raise exception('Tidak pernah bertemu')
+
+	d = (det(*garis1),det(*garis2))
+	x = det(d, xdiff) / div
+	y = det(d, ydiff) / div
+	return (x,y)
+
+
+
+def FQT1(data,data2,flag):
+	Gfuzzy=[]
+	SelisihLaba=[]
+	normalisasi=ubahKeFuzzy(data,4)
+	laba,keanggotaan = ubahkeFuzzyDana(data2)
+	#without
+	wb,wa = linearRegresion([keanggotaan,data2[1]])
+	dataProses = []
+	dataProses.append(keanggotaan)
+	dataProses.append(laba)
+	kec = min(keanggotaan)
+	bes = max(keanggotaan)
+	X = np.array([keanggotaan])
+	Xt = X.T
+	Y = np.array([laba])
+	Yt = Y.T
+	#Store semua data A
+	for kol in data:
+		G = np.array(pembentukanVektorG(kol))
+		a = cariNilaiA(G,X,Xt,Yt)
+		a = a[0,0]
+		SelisihLaba.append(a-wa)
+		Gfuzzy.append(a)
+	#cek
+	print (Gfuzzy)
+	print (SelisihLaba)
+	if(flag==666):
+		gambarGrafik(dataProses,0,0)
+	elif(flag==1):
+		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+	elif(flag==2):
+		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+	elif(flag==3):
+		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+	elif(flag==4):
+		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+	elif(flag==5):
+		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+	elif(flag==6):
+		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+
+
+FQT1(data,data2,2)
 
 
 

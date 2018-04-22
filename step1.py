@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import inv
-from Intersection import find_intersection as tikpot
+import cv2
+
 '''
 	Soal dari buku : 	Kusumadewi, S.. (2004). Aplikasi Logika Fuzzy Untuk Pendukung Keputusan. Yogyakarta: Graha Ilmu.
 						Bab V (kasus1)
@@ -270,6 +271,12 @@ def gambarGrafik(dataProses,value,flag):
 		plt.title(title[flag])
 	plt.legend()
 	plt.show()
+	while True:
+		k=cv2.waitKey(33)
+		if (k == ord('q')):
+			break
+	cv2.closeAllWindows()
+
 
 def meanGFuzzy(data,data2):
 	#data->kumpulanfuzzygrup,data2->keanggotaan
@@ -289,7 +296,32 @@ def meanGFuzzy(data,data2):
 def meanTotal(data):
 	return (sum(data)/len(data))
 
-#ef variansiTotal(data):
+def variansiTotal(data1,data2,m):
+	hasil=0
+	#data1mb, data2xk
+	for x in data2:
+		for y in data1:
+			temp = ((x-m)**2)*y
+			hasil = hasil+temp
+	return (hasil)
+
+def variansiFuzzyG(data1,data2,m):
+	hasil=0
+	#data1mb, data2xk
+	for x in data2:
+		for y in data1:
+			temp = ((y-m)**2)*y
+			hasil = hasil+temp
+	return (hasil)
+
+def variansiSatuGrup(data1,data2,m):
+	hasil=0
+	#data1mb, data2xk
+	for x in data2:
+		for y in data1:
+			temp = ((x-y)**2)*y
+			hasil = hasil+temp
+	return (hasil)	
 
 def rangkumanFQT1(data1, data2):
 	hasil = []
@@ -336,10 +368,26 @@ def FQT1(data,data2,flag):
 	derajatTitikPotong=[]
 	normalisasi=ubahKeFuzzy(data,4)
 	laba,keanggotaan = ubahkeFuzzyDana(data2)
+	
 	#meanGrup
 	hasilMeanGrup = meanGFuzzy(normalisasi,keanggotaan)
 	#print(hasilMeanGrup)
+	
 	#meanTotal
+	hasilMeanTotal = meanTotal(hasilMeanGrup)
+	#print(hasilMeanTotal)
+
+	#variansiTotal
+	hasilT= variansiTotal(hasilMeanGrup,keanggotaan,hasilMeanTotal)
+	print(hasilT)
+
+	#variansiFuzzyG
+	hasilB=variansiFuzzyG(hasilMeanGrup,keanggotaan,hasilMeanTotal)
+	print(hasilB)
+
+	#variansiSatuGrup
+	hasilE=variansiSatuGrup(hasilMeanGrup,keanggotaan,hasilMeanTotal)
+	print(hasilE)
 
 	#without
 	wb,wa = linearRegresion([keanggotaan,data2[1]])
@@ -379,10 +427,11 @@ def FQT1(data,data2,flag):
 	#rangkumanFQT1(Gfuzzy,SelisihLaba)
 	
 	#laporan2
-	rangkumanTitikAwal(derajatTitikPotong,data2)
+	#rangkumanTitikAwal(derajatTitikPotong,data2)
 
 	if(flag==666):
-		gambarGrafik(dataProses,0,0)
+		dataProses.append(derajatTitikPotong[0]) #biar ngga error
+		gambarGrafik(dataProses,Gfuzzy[0],666)
 	elif(flag==1):
 		dataProses.append(derajatTitikPotong[flag-1])
 		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
@@ -404,7 +453,7 @@ def FQT1(data,data2,flag):
 
 
 
-FQT1(data,data2,9)
+FQT1(data,data2,666)
 #print(linearRegresion(data2))
 
 

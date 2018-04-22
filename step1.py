@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import inv
+from Intersection import find_intersection as tikpot
 '''
 	Soal dari buku : 	Kusumadewi, S.. (2004). Aplikasi Logika Fuzzy Untuk Pendukung Keputusan. Yogyakarta: Graha Ilmu.
 						Bab V (kasus1)
@@ -68,6 +69,12 @@ def keanggotaanTinggi(data):
 			y=1
 		hasil.append(y)
 
+def keanggotaanSatuItem(x):
+	if(x>=0 and x<40000000):
+		y=x/40000000
+	elif(x>=40000000):
+		y=1
+	return(y)
 
 def clearFile(namaFile):
 	namaFile = str(namaFile+'.txt')
@@ -207,24 +214,40 @@ def cariNilaiA(G,X,Xt,Yt):
 	hasil6 = np.matmul(hasil5,Yt)
 	return(hasil6)
 
+def line_intersection(line1, line2):
+    xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
+    ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1]) #Typo was here
 
-normalisasi= ubahKeFuzzy(data,4)#tenagakerja, modal, material, teknologi, informasi, manajerial
-ntk, nmo, nma, nte, nin, nman = normalisasi
-laba,keanggotaan = ubahkeFuzzyDana(data2)
-##dibuat ke numpy supaya 2D
-G = np.array(pembentukanVektorG(nmo))
-X = np.array([keanggotaan])
-Xt = X.T
-Y = np.array([laba])
-Yt = Y.T
-##print(G.shape,X.shape,Xt.shape,Y.shape,Yt.shape)
-a = cariNilaiA(G,X,Xt,Yt)
-a = a[0,0]
-##print(a)
+    def det(a, b):
+        return a[0] * b[1] - a[1] * b[0]
+
+    div = det(xdiff, ydiff)
+    if div == 0:
+       raise Exception('lines do not intersect')
+
+    d = (det(*line1), det(*line2))
+    x = det(d, xdiff) / div
+    y = det(d, ydiff) / div
+    return x, y
+
+# normalisasi= ubahKeFuzzy(data,4)#tenagakerja, modal, material, teknologi, informasi, manajerial
+# ntk, nmo, nma, nte, nin, nman = normalisasi
+# laba,keanggotaan = ubahkeFuzzyDana(data2)
+# ##dibuat ke numpy supaya 2D
+# G = np.array(pembentukanVektorG(nmo))
+# X = np.array([keanggotaan])
+# Xt = X.T
+# Y = np.array([laba])
+# Yt = Y.T
+# ##print(G.shape,X.shape,Xt.shape,Y.shape,Yt.shape)
+# a = cariNilaiA(G,X,Xt,Yt)
+# a = a[0,0]
+# ##print(a)
 
 def gambarGrafik(dataProses,value,flag):
+	title = ["Without","Tenaga Kerja", "Modal", "Material", "Teknologi", "informasi", "manajerial"]
 	a,b = linearRegresion(dataProses)
-	keanggotaan,laba = dataProses
+	keanggotaan,laba,tikpot = dataProses
 	def f1(keanggotaan,a,b):
 		hit = []
 		for x in keanggotaan:
@@ -239,41 +262,94 @@ def gambarGrafik(dataProses,value,flag):
 		return(hit)
 	plt.scatter(keanggotaan,laba,label='data aktual',s=0.5)
 	plt.plot(keanggotaan,f1(keanggotaan,a,b),c='k',label='hasil regresi without',linewidth=0.1)
-	if(flag==1):
+	plt.title("without")
+	if(flag<665 and flag>0):
 		plt.plot(keanggotaan,f2(keanggotaan,value),c='r',label='hasil regresi',linewidth=0.1)
+		labelT = "titik potong di "+str(tikpot[0])+" , "+str(tikpot[1])
+		plt.scatter(tikpot[0],tikpot[1],label=labelT,c='g',s=20)
+		plt.title(title[flag])
 	plt.legend()
 	plt.show()
 
-def cariTitikPotong(garis1,garis2):
-	xdiff = (garis1[0][0]-garis1[1][0],garis2[0][0]-garis2[1][0])
-	ydiff = (garis1[0][0]-garis1[1][0],garis2[0][0]-garis2[1][0])
+def meanGFuzzy(data,data2):
+	#data->kumpulanfuzzygrup,data2->keanggotaan
+	hasiltemp = []
+	hasil=[]
+	i=0
+	while(i<len(data)):
+		j=0
+		while(j<len(data[i])):
+			hasiltemp.append(data[i][j]*data2[j])
+			j+=1
+		hasil.append(sum(hasiltemp)/len(hasiltemp))
+		i+=1
 
-	def det(a,b):
-		return (a[0]*b[0] - a[1]*b[0])
+	return hasil
 
-	div = det(xdiff,ydiff)
-	if div == 0:
-		raise exception('Tidak pernah bertemu')
+def meanTotal(data):
+	return (sum(data)/len(data))
 
-	d = (det(*garis1),det(*garis2))
-	x = det(d, xdiff) / div
-	y = det(d, ydiff) / div
-	return (x,y)
+#ef variansiTotal(data):
 
+def rangkumanFQT1(data1, data2):
+	hasil = []
+	def simpanRangkumanFQT1(data,namaFile):
+		clearFile(namaFile)
+		insertFile(namaFile,data)
+	seg1 = [] #bobotkategori
+	for x in data1:
+		seg1.append([x,keanggotaanSatuItem(x)])
+	seg2 = [] #penambahan kontribusi
+	for x in data2:
+		seg2.append([x,keanggotaanSatuItem(x)])
+	hasil.append(seg1)
+	hasil.append(seg2)
+	nama='dataRangkuman1'
+	simpanRangkumanFQT1(hasil,nama)
+	return hasil
+
+def rangkumanTitikAwal(data1,data2):
+	hasil = []
+	def simpanRangkumanTitikAwal(data,namaFile):
+		clearFile(namaFile)
+		insertFile(namaFile,data)
+	b,a = linearRegresion(data2)
+	#print(b,a)
+	hasil.append(data1)
+	temp=[]
+	i=0
+	while(i<len(data1)):
+		temp.append((data1[i][1]/a)-b)
+		i+=1
+	
+	hasil.append(temp)
+	namaFile='DataTitikAwal'
+	simpanRangkumanTitikAwal(hasil,namaFile)
+	return(hasil)
 
 
 def FQT1(data,data2,flag):
 	Gfuzzy=[]
 	SelisihLaba=[]
+	stackGaris = []
+	potong=[]
+	derajatTitikPotong=[]
 	normalisasi=ubahKeFuzzy(data,4)
 	laba,keanggotaan = ubahkeFuzzyDana(data2)
+	#meanGrup
+	hasilMeanGrup = meanGFuzzy(normalisasi,keanggotaan)
+	#print(hasilMeanGrup)
+	#meanTotal
+
 	#without
 	wb,wa = linearRegresion([keanggotaan,data2[1]])
+	#print(wa,wb)
 	dataProses = []
 	dataProses.append(keanggotaan)
 	dataProses.append(laba)
 	kec = min(keanggotaan)
 	bes = max(keanggotaan)
+	garis2 = [[[kec,wa*kec+wb],[bes,wa*bes+wb]]]*6
 	X = np.array([keanggotaan])
 	Xt = X.T
 	Y = np.array([laba])
@@ -283,29 +359,56 @@ def FQT1(data,data2,flag):
 		G = np.array(pembentukanVektorG(kol))
 		a = cariNilaiA(G,X,Xt,Yt)
 		a = a[0,0]
+		garis1 = [[kec,a*kec],[bes,a*bes]]
+		stackGaris.append(garis1)
 		SelisihLaba.append(a-wa)
 		Gfuzzy.append(a)
+	i=0
+	while(i<6):
+		hasil = line_intersection(stackGaris[i],garis2[i])
+		derajatTitikPotong.append(hasil)
+		i+=1
 	#cek
-	print (Gfuzzy)
-	print (SelisihLaba)
+	# print(stackGaris)
+	# print(garis2)
+	#print(derajatTitikPotong)
+	#print (Gfuzzy)
+	#print (SelisihLaba)
+
+	#laporan1
+	#rangkumanFQT1(Gfuzzy,SelisihLaba)
+	
+	#laporan2
+	rangkumanTitikAwal(derajatTitikPotong,data2)
+
 	if(flag==666):
 		gambarGrafik(dataProses,0,0)
 	elif(flag==1):
-		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+		dataProses.append(derajatTitikPotong[flag-1])
+		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 	elif(flag==2):
-		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+		dataProses.append(derajatTitikPotong[flag-1])
+		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 	elif(flag==3):
-		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+		dataProses.append(derajatTitikPotong[flag-1])
+		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 	elif(flag==4):
-		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+		dataProses.append(derajatTitikPotong[flag-1])
+		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 	elif(flag==5):
-		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+		dataProses.append(derajatTitikPotong[flag-1])
+		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 	elif(flag==6):
-		gambarGrafik(dataProses,Gfuzzy[flag-1],1)
+		dataProses.append(derajatTitikPotong[flag-1])
+		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 
 
-FQT1(data,data2,2)
 
+FQT1(data,data2,9)
+#print(linearRegresion(data2))
+
+
+#print(tikpot(((0.5, 0.5), (1.5, 0.5)), ((1, 0), (1, 2))))
 
 
 

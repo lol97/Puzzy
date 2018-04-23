@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.linalg import inv
 from numpy.linalg import matrix_power as mp
-from numpy.linalg import cholesky as chol
+from scipy.linalg import cholesky as chol
 from scipy.linalg import sqrtm as sm
+from numpy.linalg import eig as eg
+from numpy.linalg import eigvals as egval
 import cv2
 '''
 	Soal dari buku : 	Kusumadewi, S.. (2004). Aplikasi Logika Fuzzy Untuk Pendukung Keputusan. Yogyakarta: Graha Ilmu.
@@ -185,8 +187,8 @@ def cariMatriksSG(data,external_standard):
 	return(hasil6)
 
 #cek cariMatriksSG
-	# cek = cariMatriksSG(data,external_standard)
-	# print(cek)
+cek = cariMatriksSG(data,external_standard)
+#print(cek[:,11])
 
 def cariMatriksS(data,external_standard):
 	A = np.array(buatMatriksA(data))
@@ -213,9 +215,116 @@ def decompositionCholesky(data,external_standard):
 	return(final)
 
 #cek decomposition
-#dataChol = decompositionCholesky(data,external_standard)
+#cek = cariMatriksS(data,external_standard)
+dataChol = decompositionCholesky(data,external_standard)
+#print(cek)
+#print("-------------")
+#print(np.dot(dataChol,dataChol.T))
 #print(dataChol)
 
-def cariMatriksgamma(data,external_standard):
-	
+def cariMatriksGamma(data,external_standard):
+	seg = np.array(decompositionCholesky(data,external_standard))
+	Sg = np.array(cariMatriksSG(data,external_standard))
+	hasil1 = seg.T
+	#print(np.amin(hasil1))
+	hasil2 = inv(hasil1)
+	#print(np.amin(hasil2))
+	hasil3 = np.matmul(hasil2,Sg)
+	#print(np.amin(hasil3))
+	hasil4 = inv(seg)
+	#print(np.amin(hasil4))
+	hasil5 = np.matmul(hasil3,hasil4)
+	#print(np.amax(hasil5))
+	return(hasil5)
+
+#cek cariMatriksGamma
+gamma = cariMatriksGamma(data,external_standard)
+evalue,evector = eg(gamma)
+nevector = np.array(evector)
+bobot = egval(nevector)
+bobot = bobot.real
+def findKolomYJ(bobot, data):
+	i=0
+	hasil = []
+	while(i<len(data)):
+		j = 0
+		temp = 0
+		while (j<len(bobot)):
+			temp = temp + (data[i][j]*bobot[j].real)
+			j+=1
+		hasil.append(temp.real)
+		i+=1
+
+	return(hasil)
+
+#cek YJ
+rangkuman1 = findKolomYJ(bobot, data)
+	# print(rangkuman1)
+
+def linearRegresion(data):
+	'''
+		indeks[0] -> response variable -> x
+		indeks[1] -> predictor variable -> y
+	'''
+	x2=[]
+	y2=[]
+	xy=[]
+	n = len(data[0])
+
+	for x in data[0]:
+		x2.append(x**2)
+
+	for y in data[0]:
+		y2.append(y**2)
+
+	i=0;
+	while(i<n):
+		dump = data[0][i]*data[1][i]
+		xy.append(dump)
+		i+=1
+	jmlhx = sum(data[0])
+	jmlhy = sum(data[1])
+	jmlhx2 = sum(x2)
+	jmlhy2 = sum(y2)
+	jmlhxy = sum(xy)
+
+	a = ((jmlhy*jmlhx2)-(jmlhx*jmlhxy))/(n*jmlhx2-(jmlhx**2))
+	b = ((n*jmlhxy)-(jmlhx*jmlhy))/(n*jmlhx2-(jmlhx**2))
+
+	return(a,b)
+
+#cek hasillinearregression
+send = []
+send.append(external_standard[0])
+send.append(rangkuman1)
+reg1 = linearRegresion(send)
+reg2 = linearRegresion([external_standard[1],rangkuman1])
+
+# print(reg1)
+# print(reg2)
+
+def gambarGafik(reg1, reg2, yj,external_standard):
+	def f1(yj,reg):
+		hit = []
+		for x in yj:
+			y = reg[0]*x+reg[1]
+			hit.append(y)
+		return(hit)
+	plt.scatter(yj,external_standard[0],label='Merk A',s=10,marker='^')
+	plt.scatter(yj,external_standard[1],label='Merk B',s=10,marker='o')
+	plt.plot(yj,f1(yj,reg1),c='k',label='regressi 1',linewidth=0.1)
+	plt.plot(yj,f1(yj,reg2),c='r',label='regressi 2',linewidth=0.1)
+	plt.legend()
+	plt.show()
+	while True:
+		k=cv2.waitKey(33)
+		if (k == ord('q')):
+			break
+	cv2.closeAllWindows()
+
+gambarGafik(reg1,reg2,rangkuman1,external_standard)
+
+
+
+
 

@@ -5,7 +5,7 @@ import cv2
 
 '''
 	Soal dari buku : 	Kusumadewi, S.. (2004). Aplikasi Logika Fuzzy Untuk Pendukung Keputusan. Yogyakarta: Graha Ilmu.
-						Bab V (kasus1)
+						Bab V (kasus 5.1)
 	Code by: xsufyan@gmail.com (github.com/lol97)
 	Entrepeter : Python 3.6
 '''
@@ -23,16 +23,17 @@ data2 = [[7000000, 10000000, 7500000, 5000000, 17000000, 7000000, 14000000, 1800
 		]
 
 # print('cek Len data')
-# print (len(data[0]))
-# print (len(data[1]))
-# print (len(data[2]))
-# print (len(data[3]))
-# print (len(data[4]))
-# print (len(data[5]))
+	# print (len(data[0]))
+	# print (len(data[1]))
+	# print (len(data[2]))
+	# print (len(data[3]))
+	# print (len(data[4]))
+	# print (len(data[5]))
 
 # print('cek Len data2')
-# print (len(data2[0]))
-# print (len(data2[1]))
+	# print (len(data2[0]))
+	# print (len(data2[1]))
+
 def ubahKeFuzzy(data, skala):
 	olah1=[]
 	for y in data:
@@ -128,59 +129,59 @@ def linearRegresion(data):
 
 	return(a,b)
 
-
-# hasil = []
-# hasil = ubahkeFuzzyDana(data2)
-# print(hasil[1])
-
-
-# b,a = linearRegresion(data2)
-# print(a)
-# print(b)
+#dump check grafik data
+	# hasil = []
+	# hasil = ubahkeFuzzyDana(data2)
+	# print(hasil[1])
 
 
-# cek Hasil1
-# normalisasi = ubahKeFuzzy(data,4)
-# print(normalisasi)
-
-# tulisDataRaw ke File
-# namaFileRaw='dataRaw1'
-# namaFileRaw2='dataRaw2'
-# clearFile(namaFileRaw)
-# insertFile(namaFileRaw,data)
-# clearFile(namaFileRaw2)
-# insertFile(namaFileRaw2,data2)
-
-# tulisDataNormalisasi ke File
-# normalisasi = ubahKeFuzzy(data,4)
-# clearFile('normalisasi1')
-# insertFile('normalisasi1',normalisasi)
-
-'''
-# menggambarkan grafik linear regresi untuk y = laba dan x = nilai kenaggotaan tinggi dari total
-total,_ = data2 #0-> total, 1-> laba
-laba,keanggotaan = ubahkeFuzzyDana(data2) #0 -> laba, 1->keanggotaan tinggi dari total
-
-dataProses = []
-dataProses.append(keanggotaan)
-dataProses.append(laba)
-a,b = linearRegresion(dataProses)
-print(a)
-print(b)
+	# b,a = linearRegresion(data2)
+	# print(a)
+	# print(b)
 
 
-plt.scatter(keanggotaan,laba,label='data aktual')
-def f(data,a,b):
-	hit = []
-	for x in data:
-		y = b*x+a
-		hit.append(y)
-	return(hit)
+	# cek Hasil1
+	# normalisasi = ubahKeFuzzy(data,4)
+	# print(normalisasi)
 
-plt.plot(keanggotaan,f(keanggotaan,a,b),c='k',label='hasil regresi')
-plt.legend()
-plt.show()
-'''
+	# tulisDataRaw ke File
+	# namaFileRaw='dataRaw1'
+	# namaFileRaw2='dataRaw2'
+	# clearFile(namaFileRaw)
+	# insertFile(namaFileRaw,data)
+	# clearFile(namaFileRaw2)
+	# insertFile(namaFileRaw2,data2)
+
+	# tulisDataNormalisasi ke File
+	# normalisasi = ubahKeFuzzy(data,4)
+	# clearFile('normalisasi1')
+	# insertFile('normalisasi1',normalisasi)
+
+	'''
+	# menggambarkan grafik linear regresi untuk y = laba dan x = nilai kenaggotaan tinggi dari total
+	total,_ = data2 #0-> total, 1-> laba
+	laba,keanggotaan = ubahkeFuzzyDana(data2) #0 -> laba, 1->keanggotaan tinggi dari total
+
+	dataProses = []
+	dataProses.append(keanggotaan)
+	dataProses.append(laba)
+	a,b = linearRegresion(dataProses)
+	print(a)
+	print(b)
+
+
+	plt.scatter(keanggotaan,laba,label='data aktual')
+	def f(data,a,b):
+		hit = []
+		for x in data:
+			y = b*x+a
+			hit.append(y)
+		return(hit)
+
+	plt.plot(keanggotaan,f(keanggotaan,a,b),c='k',label='hasil regresi')
+	plt.legend()
+	plt.show()
+	'''
 
 def pembentukanVektorG(keanggotaan):
 	vektorHasil=[]
@@ -232,18 +233,18 @@ def line_intersection(line1, line2):
     return x, y
 
 # normalisasi= ubahKeFuzzy(data,4)#tenagakerja, modal, material, teknologi, informasi, manajerial
-# ntk, nmo, nma, nte, nin, nman = normalisasi
-# laba,keanggotaan = ubahkeFuzzyDana(data2)
-# ##dibuat ke numpy supaya 2D
-# G = np.array(pembentukanVektorG(nmo))
-# X = np.array([keanggotaan])
-# Xt = X.T
-# Y = np.array([laba])
-# Yt = Y.T
-# ##print(G.shape,X.shape,Xt.shape,Y.shape,Yt.shape)
-# a = cariNilaiA(G,X,Xt,Yt)
-# a = a[0,0]
-# ##print(a)
+	# ntk, nmo, nma, nte, nin, nman = normalisasi
+	# laba,keanggotaan = ubahkeFuzzyDana(data2)
+	# ##dibuat ke numpy supaya 2D
+	# G = np.array(pembentukanVektorG(nmo))
+	# X = np.array([keanggotaan])
+	# Xt = X.T
+	# Y = np.array([laba])
+	# Yt = Y.T
+	# ##print(G.shape,X.shape,Xt.shape,Y.shape,Yt.shape)
+	# a = cariNilaiA(G,X,Xt,Yt)
+	# a = a[0,0]
+	# ##print(a)
 
 def gambarGrafik(dataProses,value,flag):
 	title = ["Without","Tenaga Kerja", "Modal", "Material", "Teknologi", "informasi", "manajerial"]
@@ -278,25 +279,26 @@ def gambarGrafik(dataProses,value,flag):
 	cv2.closeAllWindows()
 
 
-def meanGFuzzy(data,data2):
+def meanGFuzzy(data1,data2):
 	#data->kumpulanfuzzygrup,data2->keanggotaan
-	hasiltemp = []
 	hasil=[]
 	i=0
 	while(i<len(data)):
 		j=0
+		hasiltemp = []
+		sumptemp = 0
 		while(j<len(data[i])):
-			hasiltemp.append(data[i][j]*data2[j])
+			sumptemp = sumptemp + data1[i][j]*data2[j]
 			j+=1
-		hasil.append(sum(hasiltemp)/len(hasiltemp))
+		hasil.append(sumptemp/sum(data2))
 		i+=1
-
 	return hasil
 
-def meanTotal(data):
-	return (sum(data)/len(data))
+def meanTotal(data1, data2):
+	return (sum(data1)/sum(data2))
 
 def variansiTotal(data1,data2,m):
+	#data1->hasilGfuzzy, data2 keanggotaan
 	hasil=0
 	#data1mb, data2xk
 	for x in data2:
@@ -307,7 +309,7 @@ def variansiTotal(data1,data2,m):
 
 def variansiFuzzyG(data1,data2,m):
 	hasil=0
-	#data1mb, data2xk
+	#data1->hasilGfuzzy, data2 keanggotaan
 	for x in data2:
 		for y in data1:
 			temp = ((y-m)**2)*y
@@ -359,7 +361,6 @@ def rangkumanTitikAwal(data1,data2):
 	simpanRangkumanTitikAwal(hasil,namaFile)
 	return(hasil)
 
-
 def FQT1(data,data2,flag):
 	Gfuzzy=[]
 	SelisihLaba=[]
@@ -368,26 +369,29 @@ def FQT1(data,data2,flag):
 	derajatTitikPotong=[]
 	normalisasi=ubahKeFuzzy(data,4)
 	laba,keanggotaan = ubahkeFuzzyDana(data2)
+	#print cek
+	print(normalisasi)
+	print(keanggotaan)
 	
 	#meanGrup
 	hasilMeanGrup = meanGFuzzy(normalisasi,keanggotaan)
 	#print(hasilMeanGrup)
 	
 	#meanTotal
-	hasilMeanTotal = meanTotal(hasilMeanGrup)
+	hasilMeanTotal = meanTotal(hasilMeanGrup,keanggotaan)
 	#print(hasilMeanTotal)
 
 	#variansiTotal
 	hasilT= variansiTotal(hasilMeanGrup,keanggotaan,hasilMeanTotal)
-	print(hasilT)
+	#print(hasilT)
 
 	#variansiFuzzyG
 	hasilB=variansiFuzzyG(hasilMeanGrup,keanggotaan,hasilMeanTotal)
-	print(hasilB)
+	#print(hasilB)
 
 	#variansiSatuGrup
 	hasilE=variansiSatuGrup(hasilMeanGrup,keanggotaan,hasilMeanTotal)
-	print(hasilE)
+	#print(hasilE)
 
 	#without
 	wb,wa = linearRegresion([keanggotaan,data2[1]])
@@ -450,7 +454,6 @@ def FQT1(data,data2,flag):
 	elif(flag==6):
 		dataProses.append(derajatTitikPotong[flag-1])
 		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
-
 
 
 FQT1(data,data2,666)

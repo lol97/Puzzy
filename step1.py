@@ -96,6 +96,9 @@ def insertFile(namaFile, data):
 		file.write('\n')
 	file.close()
 
+namaFile = "dataRaw2"
+clearFile(namaFile)
+insertFile(namaFile,data2)
 
 def linearRegresion(data):
 	'''
@@ -456,7 +459,7 @@ def FQT1(data,data2,flag):
 		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 
 
-FQT1(data,data2,666)
+FQT1(data,data2,1)
 #print(linearRegresion(data2))
 
 

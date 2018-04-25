@@ -7,6 +7,7 @@ from scipy.linalg import sqrtm as sm
 from numpy.linalg import eig as eg
 from numpy.linalg import eigvals as egval
 import cv2
+
 '''
 	Soal dari buku : 	Kusumadewi, S.. (2004). Aplikasi Logika Fuzzy Untuk Pendukung Keputusan. Yogyakarta: Graha Ilmu.
 						Bab V (kasus 5.2)
@@ -52,6 +53,24 @@ kmdhn_mdptkn = [[0.1, 0.3, 0.5, 0.8, 0.7, 0.9, 0.1, 1.0, 0.3, 0.0, 0.0, 0.5, 1.0
 	# print(len(kemasan[0]),len(kemasan[1]))
 	# print(len(kmdhn_mdptkn[0]),len(kmdhn_mdptkn[1]))
 
+def clearFile(namaFile):
+	namaFile = str(namaFile+'.txt')
+	file = open(namaFile,'w')
+	file.close()
+
+
+def insertFile(namaFile, data):
+	data = list(map(list,zip(*data))) #transpose data
+	namaFile = str(namaFile+'.txt')
+	file = open(namaFile,'a')
+	for y in data:
+		temp = [] 
+		for x in y:
+			file.write(str(x))
+			file.write('\t')
+		file.write('\n')
+	file.close()
+
 def buatMatriksRespon(harga,selera_rasa,komposisi, ukuran, kemasan, kmdhn_mdptkn):
 	hasil = []
 	list_data = [harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn]
@@ -68,9 +87,21 @@ def buatMatriksRespon(harga,selera_rasa,komposisi, ukuran, kemasan, kmdhn_mdptkn
 		i+=1
 	return hasil
 
+
 #cek buatMatriksRespon
 data = buatMatriksRespon(harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn)
 	# print(cek1[14])
+# datan = np.array(data)
+# datat = datan.T
+# namaFile = 'Data'
+# clearFile(namaFile)
+# insertFile(namaFile,datat)
+
+edn = np.array(external_standard)
+edt = edn.T
+namaFile = 'DataExternalStandard'
+clearFile(namaFile)
+insertFile(namaFile,edn)
 
 def buatMatriksA(data):
 	temp = data+data

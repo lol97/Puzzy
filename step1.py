@@ -96,9 +96,9 @@ def insertFile(namaFile, data):
 		file.write('\n')
 	file.close()
 
-namaFile = "dataRaw2"
-clearFile(namaFile)
-insertFile(namaFile,data2)
+# namaFile = "dataRaw2"
+# clearFile(namaFile)
+# insertFile(namaFile,data2)
 
 def linearRegresion(data):
 	'''
@@ -332,6 +332,7 @@ def rangkumanFQT1(data1, data2):
 	hasil = []
 	def simpanRangkumanFQT1(data,namaFile):
 		clearFile(namaFile)
+		data = list(data)
 		insertFile(namaFile,data)
 	seg1 = [] #bobotkategori
 	for x in data1:
@@ -349,6 +350,7 @@ def rangkumanTitikAwal(data1,data2):
 	hasil = []
 	def simpanRangkumanTitikAwal(data,namaFile):
 		clearFile(namaFile)
+		data = list(data)
 		insertFile(namaFile,data)
 	b,a = linearRegresion(data2)
 	#print(b,a)
@@ -373,8 +375,8 @@ def FQT1(data,data2,flag):
 	normalisasi=ubahKeFuzzy(data,4)
 	laba,keanggotaan = ubahkeFuzzyDana(data2)
 	#print cek
-	print(normalisasi)
-	print(keanggotaan)
+	# print(normalisasi)
+	# print(keanggotaan)
 	
 	#meanGrup
 	hasilMeanGrup = meanGFuzzy(normalisasi,keanggotaan)
@@ -459,7 +461,7 @@ def FQT1(data,data2,flag):
 		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 
 
-FQT1(data,data2,1)
+FQT1(data,data2,6)
 #print(linearRegresion(data2))
 
 

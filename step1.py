@@ -252,6 +252,8 @@ def line_intersection(line1, line2):
 def gambarGrafik(dataProses,value,flag):
 	title = ["Without","Tenaga Kerja", "Modal", "Material", "Teknologi", "informasi", "manajerial"]
 	a,b = linearRegresion(dataProses)
+	print(a)
+	print(b)
 	keanggotaan,laba,tikpot = dataProses
 	def f1(keanggotaan,a,b):
 		hit = []
@@ -265,11 +267,11 @@ def gambarGrafik(dataProses,value,flag):
 			y = x*a
 			hit.append(y)
 		return(hit)
-	plt.scatter(keanggotaan,laba,label='data aktual',s=0.5)
-	plt.plot(keanggotaan,f1(keanggotaan,a,b),c='k',label='hasil regresi without',linewidth=0.1)
+	plt.scatter(keanggotaan,laba,label='data aktual',s=2)
+	plt.plot(keanggotaan,f1(keanggotaan,a,b),c='k',label='hasil regresi without',linewidth=2)
 	plt.title("without")
 	if(flag<665 and flag>0):
-		plt.plot(keanggotaan,f2(keanggotaan,value),c='r',label='hasil regresi',linewidth=0.1)
+		plt.plot(keanggotaan,f2(keanggotaan,value),c='r',label='hasil regresi',linewidth=2)
 		labelT = "titik potong di "+str(tikpot[0])+" , "+str(tikpot[1])
 		plt.scatter(tikpot[0],tikpot[1],label=labelT,c='g',s=20)
 		plt.title(title[flag])
@@ -374,6 +376,7 @@ def FQT1(data,data2,flag):
 	derajatTitikPotong=[]
 	normalisasi=ubahKeFuzzy(data,4)
 	laba,keanggotaan = ubahkeFuzzyDana(data2)
+	print(keanggotaan)
 	#print cek
 	# print(normalisasi)
 	# print(keanggotaan)
@@ -400,7 +403,7 @@ def FQT1(data,data2,flag):
 
 	#without
 	wb,wa = linearRegresion([keanggotaan,data2[1]])
-	#print(wa,wb)
+	print(wa,wb)
 	dataProses = []
 	dataProses.append(keanggotaan)
 	dataProses.append(laba)
@@ -429,7 +432,7 @@ def FQT1(data,data2,flag):
 	# print(stackGaris)
 	# print(garis2)
 	#print(derajatTitikPotong)
-	#print (Gfuzzy)
+	print (Gfuzzy)
 	#print (SelisihLaba)
 
 	#laporan1
@@ -461,7 +464,7 @@ def FQT1(data,data2,flag):
 		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 
 
-FQT1(data,data2,6)
+FQT1(data,data2,666)
 #print(linearRegresion(data2))
 
 

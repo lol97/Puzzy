@@ -6,7 +6,6 @@ from scipy.linalg import cholesky as chol
 from scipy.linalg import sqrtm as sm
 from numpy.linalg import eig as eg
 from numpy.linalg import eigvals as egval
-from scipy.sparse.linalg import eigs as hahaha
 import cv2
 
 '''
@@ -72,14 +71,6 @@ def insertFile(namaFile, data):
 		file.write('\n')
 	file.close()
 
-def insert1ArrayFile(namaFile,data):
-	namaFile = str(namaFile+'.txt')
-	file = open(namaFile,'a')
-	for y in data:
-		file.write(str(y))
-		file.write('\n')
-	file.close()
-
 def buatMatriksRespon(harga,selera_rasa,komposisi, ukuran, kemasan, kmdhn_mdptkn):
 	hasil = []
 	list_data = [harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn]
@@ -94,11 +85,15 @@ def buatMatriksRespon(harga,selera_rasa,komposisi, ukuran, kemasan, kmdhn_mdptkn
 				j+=1
 		hasil.append(temp)
 		i+=1
-	return hasil
+	hasil=np.array(hasil)
+	return hasil.T
 
 
 #cek buatMatriksRespon
 data = buatMatriksRespon(harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn)
+print(data[0])
+clearFile('matriksData')
+insertFile('matriksData',data)
 	# print(cek1[14])
 # datan = np.array(data)
 # datat = datan.T
@@ -113,10 +108,14 @@ clearFile(namaFile)
 insertFile(namaFile,edn)
 
 def buatMatriksA(data):
+	data = data.T
+	data  = data.tolist()
 	temp = data+data
 	tempn = np.array(temp) #cekifneeded
-	return temp
-
+	return tempn.T
+A = buatMatriksA(data)
+clearFile('matriksA')
+insertFile('matriksA',A)
 #cek buatMatriksA
 	# cekMatriks = buatMatriksA(buatMatriksRespon(harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn))
 	# print(cekMatriks[15])
@@ -126,13 +125,14 @@ def buatMatriksAG(data,external_standard):
 	hasil2=[]
 	#standar1
 	i=0
+	# print(data[0])
 	while(i<len(data[0])):
 		j=0
 		sumtemp = 0
 		while(j<len(data)):
 			sumtemp = sumtemp+data[j][i]*external_standard[0][j]
 			j+=1
-		hasil1.append(round(sumtemp/sum(external_standard[0]),2))
+		hasil1.append(sumtemp/sum(external_standard[0]))
 		i+=1
 	# hasil1 = [hasil1]*len(data)
 	#standar2
@@ -143,7 +143,7 @@ def buatMatriksAG(data,external_standard):
 		while(j<len(data)):
 			sumtemp = sumtemp+data[j][i]*external_standard[1][j]
 			j+=1
-		hasil2.append(round(sumtemp/sum(external_standard[1]),2))
+		hasil2.append(sumtemp/sum(external_standard[1]))
 		i+=1
 	# hasil2 = [hasil2]*len(data)
 	hasil = []
@@ -153,10 +153,7 @@ def buatMatriksAG(data,external_standard):
 		hasil.append(hasil2)
 	return(hasil)
 Ag = buatMatriksAG(data,external_standard)
-Ag = np.array(Ag)
-# print(Ag.shape)
-Ag = Ag.T
-clearFile('matriksAG')
+clearFile('MatriksAG')
 insertFile('matriksAG',Ag)
 #cek buatMatriksAG
 	# cekMatriks = buatMatriksRespon(harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn)
@@ -181,11 +178,9 @@ def buatMatriksMeanA(data, external_standard):
 		hasil.append(hasil1)
 		i+=1
 	return(hasil)
-meanA = buatMatriksMeanA(data,external_standard)
-meanA = np.array(meanA)
-meanA = meanA.T
+Amean = buatMatriksMeanA(data,external_standard)
 clearFile('matriksMeanA')
-insertFile('matriksMeanA',meanA)
+insertFile('matriksMeanA',Amean)
 #cek buatMatriksMeanA
 	# cekMatriks = buatMatriksRespon(harga, selera_rasa, komposisi, ukuran, kemasan, kmdhn_mdptkn)
 	# cek = buatMatriksMeanA(cekMatriks,external_standard)
@@ -217,11 +212,6 @@ def buatMatriksG(external_standard):
 		i+=1
 		vektorHasil.append(vektorTemp)
 	return (vektorHasil)
-G = buatMatriksG(external_standard)
-G = np.array(G)
-G = G.T
-clearFile('matriksG')
-insertFile('matriksG',G)
 
 #cek buatMatriksG
 	# cek = buatMatriksG(external_standard)
@@ -239,11 +229,7 @@ def cariMatriksSG(data,external_standard):
 	hasil6 = np.matmul(hasil5,hasil2)
 	#print(hasil6.shape)
 	return(hasil6)
-SG = cariMatriksSG(data,external_standard)
-SG = np.array(SG)
-SG = SG.T
-clearFile('matriksSG')
-insertFile('matriksSG',SG)
+
 #cek cariMatriksSG
 cek = cariMatriksSG(data,external_standard)
 #print(cek[:,11])
@@ -261,12 +247,7 @@ def cariMatriksS(data,external_standard):
 	hasil6 = np.matmul(hasil4,hasil5)
 	#print(hasil6.shape)
 	return (hasil6)
-S = cariMatriksS(data,external_standard)
-S = np.array(S)
-S = S.T
-S = S.real
-clearFile('matriksS')
-insertFile('matriksS',S)
+
 #cek cariMatriksS
 	# cek = cariMatriksS(data,external_standard)
 	# print(cek)
@@ -279,13 +260,7 @@ def decompositionCholesky(data,external_standard):
 
 #cek decomposition
 #cek = cariMatriksS(data,external_standard)
-seg = decompositionCholesky(data,external_standard)
 dataChol = decompositionCholesky(data,external_standard)
-dataChol = np.array(dataChol)
-dataChol = dataChol.T
-dataChol = dataChol.real
-clearFile('matriksChol')
-insertFile('matriksChol',dataChol)
 #print(cek)
 #print("-------------")
 #print(np.dot(dataChol,dataChol.T))
@@ -308,30 +283,12 @@ def cariMatriksGamma(data,external_standard):
 
 #cek cariMatriksGamma
 gamma = cariMatriksGamma(data,external_standard)
-gammaW = np.array(gamma)
-gammaW = gammaW.T
-gammaW = gammaW.real
-clearFile('matriksGamma')
-insertFile('matriksGamma',gammaW)
+# insertFile('dataGamma',gamma)
 evalue,evector = eg(gamma)
-evalue = evalue.real
-#print(evalue)
-clearFile('EigenValue')
-insert1ArrayFile('EigenValue',evalue)
-maxKey = max(evalue)
 nevector = np.array(evector)
-evector = evector.real
-clearFile('evectorMat')
-insertFile('evectorMat',evector.T)
-bobot = evector[:,1].real
-#print(bobot)
-
-def cariBobotFinal(bobot,seg):
-	hasil = inv(seg)
-	return np.matmul(hasil,bobot)
-final = cariBobotFinal(bobot,seg)
-
-def findKolomYJ(final, data):
+bobot = egval(nevector)
+bobot = bobot.real
+def findKolomYJ(bobot, data):
 	i=0
 	hasil = []
 	while(i<len(data)):
@@ -344,7 +301,7 @@ def findKolomYJ(final, data):
 		i+=1
 
 	return(hasil)
-#print(findKolomYJ(bobot,data))
+
 #cek YJ
 rangkuman1 = findKolomYJ(bobot, data)
 	# print(rangkuman1)
@@ -404,8 +361,13 @@ def gambarGafik(reg1, reg2, yj,external_standard):
 	plt.plot(yj,f1(yj,reg2),c='r',label='regressi 2',linewidth=0.1)
 	plt.legend()
 	plt.show()
+	while True:
+		k=cv2.waitKey(33)
+		if (k == ord('q')):
+			break
+	cv2.closeAllWindows()
 
-# gambarGafik(reg1,reg2,rangkuman1,external_standard)
+#gambarGafik(reg1,reg2,rangkuman1,external_standard)
 
 
 

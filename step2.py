@@ -65,7 +65,7 @@ def insertFile(namaFile, data):
 	namaFile = str(namaFile+'.txt')
 	file = open(namaFile,'a')
 	for y in data:
-		temp = [] 
+		temp = []
 		for x in y:
 			file.write(str(x))
 			file.write('\t')
@@ -405,9 +405,4 @@ def gambarGafik(reg1, reg2, yj,external_standard):
 	plt.legend()
 	plt.show()
 
-# gambarGafik(reg1,reg2,rangkuman1,external_standard)
-
-
-
-
-
+gambarGafik(reg1,reg2,rangkuman1,external_standard)

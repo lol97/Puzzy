@@ -253,7 +253,6 @@ def gambarGrafik(dataProses,value,flag):
 	title = ["Without","Tenaga Kerja", "Modal", "Material", "Teknologi", "informasi", "manajerial"]
 	a,b = linearRegresion(dataProses)
 	print(a)
-	print(b)
 	keanggotaan,laba,tikpot = dataProses
 	def f1(keanggotaan,a,b):
 		hit = []
@@ -268,20 +267,17 @@ def gambarGrafik(dataProses,value,flag):
 			hit.append(y)
 		return(hit)
 	plt.scatter(keanggotaan,laba,label='data aktual',s=2)
-	plt.plot(keanggotaan,f1(keanggotaan,a,b),c='k',label='hasil regresi without',linewidth=2)
+	plt.plot(keanggotaan,f1(keanggotaan,a,b),c='k',label='hasil regresi without',linewidth=0.1)
 	plt.title("without")
 	if(flag<665 and flag>0):
-		plt.plot(keanggotaan,f2(keanggotaan,value),c='r',label='hasil regresi',linewidth=2)
+		plt.plot(keanggotaan,f2(keanggotaan,value),c='r',label='hasil regresi',linewidth=0.1)
 		labelT = "titik potong di "+str(tikpot[0])+" , "+str(tikpot[1])
 		plt.scatter(tikpot[0],tikpot[1],label=labelT,c='g',s=20)
 		plt.title(title[flag])
 	plt.legend()
 	plt.show()
-	while True:
-		k=cv2.waitKey(33)
-		if (k == ord('q')):
-			break
-	cv2.closeAllWindows()
+	cv2.waitKey(33)
+	# cv2.closeAllWindows()
 
 
 def meanGFuzzy(data1,data2):
@@ -464,7 +460,7 @@ def FQT1(data,data2,flag):
 		gambarGrafik(dataProses,Gfuzzy[flag-1],flag)
 
 
-FQT1(data,data2,666)
+FQT1(data,data2,6)
 #print(linearRegresion(data2))
 
 
